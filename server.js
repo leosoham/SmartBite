@@ -90,3 +90,6 @@ if (process.env.NODE_ENV !== 'production') {
     }
   });
 }
+
+// Export the Express app for Vercel serverless functions
+module.exports = app;
