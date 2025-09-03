@@ -1,6 +1,4 @@
-// Load environment variables first
 require('dotenv').config();
-
 const express = require('express');
 const app = express();
 const path = require('path');
@@ -78,18 +76,8 @@ if (process.env.NODE_ENV !== 'production') {
 } else {
   // For Vercel serverless environment, we don't call app.listen()
   // Instead, we just connect to the database
-  // We'll connect to the database on each request to ensure connection is established
-  app.use(async (req, res, next) => {
-    try {
-      // Try to connect to the database before processing the request
-      await connectToDatabase();
-      next();
-    } catch (error) {
-      console.error('Failed to connect to MongoDB in middleware:', error.message);
-      return res.status(500).json({ error: 'Database connection failed' });
-    }
-  });
+  connectToDatabase()
+    .catch((err) => {
+      console.error('Failed to connect to MongoDB:', err.message);
+    });
 }
-
-// Export the Express app for Vercel serverless functions
-module.exports = app;
