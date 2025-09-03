@@ -81,3 +81,6 @@ if (process.env.NODE_ENV !== 'production') {
       console.error('Failed to connect to MongoDB:', err.message);
     });
 }
+
+// Export the Express app for Vercel serverless deployment
+module.exports = app;
