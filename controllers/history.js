@@ -1,10 +1,4 @@
-const path =require('path')
-const usersDB = {
-    users: require('../model/users.json'),
-    setUsers: function (data) { this.users = data }
-}
-
-fsPromises = require('fs').promises
+const { getDb } = require('../db');
 
 const addSearch = async (req, res)=>{
     // const cookies = req.cookies;
@@ -15,27 +9,21 @@ const addSearch = async (req, res)=>{
 
     // const {term} = req.body
 
-    const foundUser = usersDB.users.find(person => person.username === user);
-    if (!foundUser) {
-        return res.status(404).json({'msg': "no user exists"});
-    }
+    const db = getDb();
     const now = new Date();
-    const otherUsers = usersDB.users.filter(per=>per.username != foundUser.username);
-    let newUser = { ...foundUser,  history:[...(Array.isArray(foundUser.history)?foundUser.history:[]),{"code":term, "time" : now}]};
-    usersDB.setUsers([...otherUsers, newUser]);
-        await fsPromises.writeFile(
-            path.join(__dirname, '..', 'model', 'users.json'),
-            JSON.stringify(usersDB.users)
-        );
-    
-    res.status(200).json({otherUsers})
+    await db.collection('users').updateOne(
+        { username: user },
+        { $push: { history: { code: term, time: now } } }
+    );
+    res.status(200).json({ ok: true })
 }
 
 
 const getSearch = async (req, res)=>{
     const user = req.query.user;
-    const foundUser = usersDB.users.find(person => person.username === user);
-    res.json(Array.isArray(foundUser.history)?foundUser.history:[])
+    const db = getDb();
+    const foundUser = await db.collection('users').findOne({ username: user }, { projection: { history: 1, _id: 0 } });
+    res.json(Array.isArray(foundUser?.history)?foundUser.history:[])
 }
 
 module.exports = {addSearch, getSearch}

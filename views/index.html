@@ -107,6 +107,8 @@
         
 
         document.addEventListener('DOMContentLoaded', function () {
+            // Warm-up ping for Render free instance (ignores result)
+            fetch('/', { method: 'GET', cache: 'no-store' }).catch(() => {});
             const loginForm = document.getElementById('loginForm');
 
             if (loginForm) {
@@ -130,18 +132,36 @@
                     }
 
                     try {
-                        // Send login request to backend
-                        const response = await fetch("/", {
+                        async function fetchWithRetry(url, options, retries = 2, delayMs = 1200) {
+                            try {
+                                const res = await fetch(url, options);
+                                if (!res.ok && [500,502,503,504].includes(res.status) && retries > 0) {
+                                    await new Promise(r => setTimeout(r, delayMs));
+                                    return fetchWithRetry(url, options, retries - 1, delayMs * 1.5);
+                                }
+                                return res;
+                            } catch (e) {
+                                if (retries > 0) {
+                                    await new Promise(r => setTimeout(r, delayMs));
+                                    return fetchWithRetry(url, options, retries - 1, delayMs * 1.5);
+                                }
+                                throw e;
+                            }
+                        }
+
+                        // Send login request with retry (handles Render cold starts)
+                        const response = await fetchWithRetry("/", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ "user": username, "pwd": password }),
-                            credentials: "include" // ✅ so refreshToken cookie is saved
+                            credentials: "include"
                         });
 
-                        const data = await response.json();
+                        let data = {};
+                        try { data = await response.json(); } catch (_) {}
 
                         if (!response.ok) {
-                            showError(data.message || "Login failed! Please check your credentials.");
+                            showError((data && data.message) || "Login failed! Please try again.");
                             return;
                         }
 
