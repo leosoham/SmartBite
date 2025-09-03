@@ -1,17 +1,23 @@
-const path =require('path')
-const usersDB = {
-    users: require('../model/users.json'),
-    setUsers: function (data) { this.users = data }
-}
-
-fsPromises = require('fs').promises
+const { getDb } = require('../db');
 
 
 
 const getSearch = async (req, res)=>{
-    const user = req.query.barcode;
+    const barcode = req.query.barcode;
     
-    // const foundUser = usersDB.users.find(person => person.username === user);
-
-    // res.json(Array.isArray(foundUser.history)?foundUser.history:[])
+    try {
+        // This function appears to be incomplete in the original code
+        // Implementing a basic product search by barcode
+        const db = getDb();
+        const product = await db.collection('products').findOne({ barcode: barcode });
+        
+        if (product) {
+            res.json(product);
+        } else {
+            res.status(404).json({ 'message': 'Product not found' });
+        }
+    } catch (err) {
+        console.error('Error searching product:', err);
+        res.status(500).json({ 'message': 'Server error searching product' });
+    }
 }

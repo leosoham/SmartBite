@@ -1,19 +1,23 @@
-const usersDB = {
-    users: require('../model/users.json'),
-    setUsers: function (data) { this.users = data }
-}
-// const fsPromises = require('fs').promises;
-const path = require('path');
+const { getDb } = require('../db');
 
 const getData = async(req, res)=>{
-    try{const user = req.query.user;
-    const foundUser = usersDB.users.find(person => person.username === user);
-    const name = foundUser.realName.split(' ')
-    foundUser.firstName = name[0]
-    foundUser.lastName = name[1]
-    res.json(foundUser)}
-    catch(e){
-        res.sendStatus(400)
+    try {
+        const user = req.query.user;
+        const db = getDb();
+        const foundUser = await db.collection('users').findOne({ username: user });
+        
+        if (!foundUser) {
+            return res.status(404).json({ 'message': 'User not found' });
+        }
+        
+        const name = foundUser.realName.split(' ');
+        foundUser.firstName = name[0];
+        foundUser.lastName = name.length > 1 ? name[1] : '';
+        
+        res.json(foundUser);
+    } catch(e) {
+        console.error('Error fetching user data:', e);
+        res.status(500).json({ 'message': 'Server error fetching user data' });
     }
 }
 

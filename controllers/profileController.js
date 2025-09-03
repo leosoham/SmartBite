@@ -1,35 +1,33 @@
-const usersDB = {
-    users: require('../model/users.json'),
-    setUsers: function (data) { this.users = data }
-}
+const { getDb } = require('../db');
 const bcrypt = require('bcrypt');
-
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const fsPromises = require('fs').promises;
-const path = require('path');
 
 const handleChange = async (req, res) => {
     const { original, user, rname } = req.body;
     if (!original) return res.status(400).json({ 'message': 'Username and rname are required.' });
-    const foundUser = usersDB.users.find(person => person.username === original);
-    if (!foundUser) return res.sendStatus(401); 
     
-    if (foundUser){
-        const roles = Object.values(foundUser.roles);
-        const newUser = {...foundUser, "username":user, "realName" : rname}
+    try {
+        const db = getDb();
+        const foundUser = await db.collection('users').findOne({ username: original });
         
-        const otherUsers = usersDB.users.filter(person => person.username !== foundUser.username);
-       
-        usersDB.setUsers([...otherUsers, newUser]);
-        await fsPromises.writeFile(
-            path.join(__dirname, '..', 'model', 'users.json'),
-            JSON.stringify(usersDB.users)
+        if (!foundUser) return res.sendStatus(401);
+        
+        // Update user information in MongoDB
+        const result = await db.collection('users').updateOne(
+            { username: original },
+            { $set: { username: user, realName: rname } }
         );
-    
-        res.json({ newUser });
-    }else{
-        res.status(401).json({'msg': 'no user'});
+        
+        if (result.modifiedCount === 1) {
+            const updatedUser = await db.collection('users').findOne({ username: user });
+            res.json({ newUser: updatedUser });
+        } else {
+            res.status(500).json({ 'message': 'Failed to update user information' });
+        }
+    } catch (err) {
+        console.error('Profile update error:', err);
+        res.status(500).json({ 'message': 'Server error during profile update' });
     }
 }
 

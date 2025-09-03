@@ -9,6 +9,13 @@ const logEvents = async (message, logName) => {
     const dateTime = `${format(new Date(), 'yyyyMMdd\tHH:mm:ss')}`;
     const logItem = `${dateTime}\t${uuid()}\t${message}\n`;
 
+    // In production (Vercel), we'll just console log instead of writing to files
+    if (process.env.NODE_ENV === 'production') {
+        console.log(logItem);
+        return;
+    }
+    
+    // In development, we'll write to files
     try {
         if (!fs.existsSync(path.join(__dirname, '..', 'logs'))) {
             await fsPromises.mkdir(path.join(__dirname, '..', 'logs'));

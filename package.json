@@ -1,13 +1,17 @@
 {
-  "name": "12tut",
+  "name": "foodie",
   "version": "1.0.0",
-  "description": "Express tutorial",
+  "description": "Foodie - Food Information App",
   "main": "server.js",
   "scripts": {
     "start": "node server",
-    "dev": "nodemon server"
+    "dev": "nodemon server",
+    "vercel-build": "echo 'Building for Vercel'"
   },
-  "author": "Dave Gray",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "Soham K",
   "license": "ISC",
   "dependencies": {
     "mongodb": "^6.7.0",

@@ -62,11 +62,21 @@ app.all('*', (req, res) => {
 
 app.use(errorHandler);
 
-connectToDatabase()
-  .then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((err) => {
-    console.error('Failed to connect to MongoDB:', err.message);
-    process.exit(1);
-  });
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  connectToDatabase()
+    .then(() => {
+      app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+    .catch((err) => {
+      console.error('Failed to connect to MongoDB:', err.message);
+      process.exit(1);
+    });
+} else {
+  // For Vercel serverless environment, we don't call app.listen()
+  // Instead, we just connect to the database
+  connectToDatabase()
+    .catch((err) => {
+      console.error('Failed to connect to MongoDB:', err.message);
+    });
+}
