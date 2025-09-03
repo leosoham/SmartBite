@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Food Scanner</title>
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
     <style>
         /* Error box styles */
@@ -49,7 +49,7 @@
         <div class="auth-card">
             <!-- Logo placeholder -->
             <div class="logo-container">
-                <img src="./img/logo_3.png" alt="Food Scanner Logo" class="logo" id="logo">
+                <img src="/img/logo_3.png" alt="Food Scanner Logo" class="logo" id="logo">
                 <div class="logo-placeholder">Logo Here</div>
             </div>
 
@@ -131,7 +131,7 @@
 
                     try {
                         // Send login request to backend
-                        const response = await fetch("http://localhost:3500/", {
+                        const response = await fetch("/", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ "user": username, "pwd": password }),
@@ -156,29 +156,8 @@
                         localStorage.setItem("accessToken", data.accessToken);
                         localStorage.setItem("user", username);
 
-                        // ✅ Fetch homepage.html with token and load it into the page
-                        try {
-                            const homepageResponse = await fetch("/home", {
-                                method: "GET",
-                                headers: {
-                                    Authorization: `Bearer ${accessToken}`
-                                }
-                            });
-
-                            if (homepageResponse.ok) {
-                                const homepageContent = await homepageResponse.text();
-                               // window.location.href = "http://localhost:3500/history";
-
-                                document.open();
-                                document.write(homepageContent);
-                                document.close();
-                            } else {
-                                showError("Failed to load homepage.");
-                            }
-                        } catch (err) {
-                            console.error("Homepage fetch error:", err);
-                            showError("Could not load homepage.");
-                        }
+                        // Redirect to homepage so scripts and assets load normally
+                        window.location.href = "/home";
 
 
                     } catch (err) {

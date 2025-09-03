@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - Food Scanner</title>
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
 
 </head>
@@ -13,7 +13,7 @@
         <div class="auth-card">
             <!-- Logo placeholder -->
             <div class="logo-container">
-                <img src="./img/logo_3.png" alt="Food Scanner Logo" class="logo" id="logo">
+                <img src="/img/logo_3.png" alt="Food Scanner Logo" class="logo" id="logo">
                 <div class="logo-placeholder">Logo Here</div>
             </div>
             
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                 // Send request to backend
-                const response = await fetch("http://localhost:3500/register", {
+                const response = await fetch("/register", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ user: username, pwd: password, rname: namee })

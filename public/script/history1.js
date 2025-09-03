@@ -17,7 +17,7 @@ async function goBackToHomepage() {
     })
     if (res.ok) {
       // const homepageContent = await res.text();
-      window.location.href = "http://localhost:3500/home";
+      window.location.href = "/home";
 
       // document.open();
       // document.write(homepageContent);
@@ -43,7 +43,7 @@ async function goBackToHomepage() {
 
 // Redirect to product details page
 function viewProductDetails(barcode) {
-  window.location.href = `product-info.html?barcode=${barcode}`;
+  window.location.href = `/product-info?barcode=${barcode}`;
 }
 
 
@@ -90,7 +90,7 @@ async function loadHistory() {
     const user = localStorage.getItem("user");
 
     // 1. Fetch codes from your backend
-    const response = await fetch(`http://localhost:3500/savesearch?user=${encodeURIComponent(user)}`, {
+    const response = await fetch(`/savesearch?user=${encodeURIComponent(user)}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

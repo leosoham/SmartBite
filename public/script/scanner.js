@@ -128,10 +128,9 @@ function startScanner() {
       };
       outputEl.textContent = JSON.stringify(scannedData, null, 2);
 
-      // Redirect to product-info.html with barcode parameter
+      // Redirect to product info route with barcode parameter
       addSearch(code)
-      
-      window.location.href = `product-info.html?barcode=${code}`;
+      window.location.href = `/product-info?barcode=${code}`;
 
       stopScanner();
       scanAgainBtn.style.display = "inline-block";
@@ -323,17 +322,10 @@ function handleSuccessfulDetection(barcode) {
   };
   outputEl.textContent = JSON.stringify(scannedData, null, 2);
 
-  // Redirect to product-info.html with barcode parameter
-  console.log('Redirecting to product-info.html before add search:', barcode);
+  // Redirect to product info route with barcode parameter
+  console.log('Redirecting to product-info with barcode:', barcode);
   addSearch(barcode)
-  
-  console.log('Redirecting to product-info.html with barcode:', barcode);
-  //post request to save search
-
-
-
-  
-  window.location.href = `/product-info.html?barcode=${barcode}`;
+  window.location.href = `/product-info?barcode=${barcode}`;
 }
 
 // Show manual input option when detection fails
@@ -364,7 +356,7 @@ if (manualBarcodeInput && manualBarcodeBtn) {
       console.log('Manual barcode entered:', barcode);
       statusEl.textContent = "Looking up barcode: " + barcode;
       addSearch(barcode)
-      window.location.href = `product-info.html?barcode=${barcode}`;
+      window.location.href = `/product-info?barcode=${barcode}`;
     } else {
       statusEl.textContent = "Please enter a valid 12-13 digit barcode.";
       manualBarcodeInput.focus();

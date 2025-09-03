@@ -23,7 +23,7 @@ function goBackToHomepage() {
 async function loadUserData() {
     // In a real application, you would fetch this from your backend
     const user = localStorage.user
-    const token = localStorage.token
+    const token = localStorage.accessToken
     const response = await fetch(`/info?user=${encodeURIComponent(user)}`, {
       method: "GET",
       headers: {
