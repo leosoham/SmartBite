@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartBite - Barcode Scanner</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+  
+  <!-- QuaggaJS for BARCODE scanning -->
+  <script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
+
+  <style>
+    /* Scanner specific styles */
+    #camera {
+      width: 360px;
+      max-width: 95vw;
+      height: 260px;
+      background: #111;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      margin: 20px auto;
+    }
+
+    /* Green guide box */
+    #guideBox {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 220px;
+      height: 120px;
+      border: 3px solid limegreen;
+      transform: translate(-50%, -50%);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    #controls { 
+      margin: 20px 0; 
+      display: flex; 
+      gap: 12px; 
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    #controls button { 
+      padding: 12px 20px; 
+      border-radius: 10px; 
+      border: none; 
+      cursor: pointer; 
+      background: #4CAF50;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    #controls button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+
+    #status { 
+      margin: 12px 0; 
+      font-size: 16px; 
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    pre { 
+      background: #f6f6f6; 
+      padding: 12px; 
+      border-radius: 8px; 
+      max-width: 600px; 
+      margin: 0 auto;
+      overflow: auto; 
+    }
+
+    #productDetails { 
+      margin: 20px auto; 
+      padding: 20px; 
+      border: 1px solid #ddd; 
+      border-radius: 8px; 
+      background: #fff;
+      max-width: 600px;
+    }
+
+    #productDetails h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    #productDetails p {
+      margin: 8px 0;
+      color: #555;
+    }
+    
+    .scanner-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .scanner-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    
+    /* Back button style */
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: #333;
+      font-weight: bold;
+    }
+    
+    .back-arrow {
+      font-size: 24px;
+      margin-right: 8px;
+    }
+    
+    .back-text {
+      font-size: 16px;
+    }
+    
+    /* File input styling */
+    .file-input-container {
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .file-input-container label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #555;
+    }
+    
+    .file-input-tip {
+      display: block;
+      margin-top: 8px;
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <!-- Back Button -->
+  <div class="back-button" onclick="window.location.href='homepage.html'">
+    <span class="back-arrow">←</span>
+    <span class="back-text">Back to Home</span>
+  </div>
+  
+  <div class="scanner-container">
+    <h2 class="scanner-title">SmartBite - Barcode Scanner</h2>
+
+    <!-- Camera preview -->
+    <div id="camera">
+      <div id="guideBox"></div>
+    </div>
+
+    <!-- Controls -->
+    <div id="controls">
+      <button id="startBtn">Start Camera</button>
+      <button id="stopBtn" disabled>Stop</button>
+      <button id="scanAgainBtn">Scan Again</button>
+    </div>
+
+    <!-- Status & Output -->
+    <div id="status">Ready to scan. Click "Start Camera" to begin.</div>
+    <pre id="output" style="display: none;">{}</pre>
+
+    <!-- Upload fallback -->
+    <div class="file-input-container">
+      <label>Or upload a photo of a barcode:</label>
+      <input type="file" id="fileInput" accept="image/*">
+      <span class="file-input-tip">Tip: use any packaged item's barcode or a printed barcode image.</span>
+    </div>
+    
+    <!-- Manual barcode input as fallback -->
+    <div class="manual-input-container" style="margin: 20px 0; text-align: center; display: none;">
+      <label style="display: block; margin-bottom: 10px; font-weight: bold; color: #555;">
+        Or enter barcode manually:
+      </label>
+      <input type="text" id="manualBarcodeInput" placeholder="Enter 12-13 digit barcode" 
+             style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; margin-right: 8px; width: 200px;">
+      <button id="manualBarcodeBtn" 
+              style="padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer;">
+        Look Up
+      </button>
+    </div>
+    
+
+  </div>
+
+  <!-- Product details - hidden as we'll redirect to product-info.html -->
+  <div id="productDetails" style="display: none;">
+    <em>Redirecting to product details...</em>
+  </div>
+
+  <!-- Scanner logic -->
+  <script src="script/scanner.js"></script>
+</body>
+</html>

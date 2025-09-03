@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - SmartBite</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Back Button -->
+    <div class="back-button" onclick="goBackToHomepage()">
+        <span class="back-arrow">←</span>
+        <span class="back-text">Back</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="history-container">
+        <!-- Page Title -->
+        <div class="history-header">
+            <h1 class="history-title">History</h1>
+        </div>
+
+        <!-- History List -->
+        <div class="history-content">
+            <div class="history-list" id="historyList">
+                <!-- Sample history items - these would come from your backend -->
+                <div class="history-item" onclick="viewProductDetails('3948764012273')">
+                    <div class="product-info">
+                        <div class="product-name">Coca Cola</div>
+                        <div class="barcode-number">3948764012273</div>
+                    </div>
+                    <div class="scan-date">2 days ago</div>
+                </div>
+
+                <div class="history-item" onclick="viewProductDetails('4902430735057')">
+                    <div class="product-info">
+                        <div class="product-name">KitKat Chocolate</div>
+                        <div class="barcode-number">4902430735057</div>
+                    </div>
+                    <div class="scan-date">3 days ago</div>
+                </div>
+
+                <div class="history-item" onclick="viewProductDetails('8901030895162')">
+                    <div class="product-info">
+                        <div class="product-name">Maggi Noodles</div>
+                        <div class="barcode-number">8901030895162</div>
+                    </div>
+                    <div class="scan-date">1 week ago</div>
+                </div>
+
+                <div class="history-item" onclick="viewProductDetails('8901719208164')">
+                    <div class="product-info">
+                        <div class="product-name">Parle-G Biscuits</div>
+                        <div class="barcode-number">8901719208164</div>
+                    </div>
+                    <div class="scan-date">1 week ago</div>
+                </div>
+
+                <div class="history-item" onclick="viewProductDetails('8901030872574')">
+                    <div class="product-info">
+                        <div class="product-name">Britannia Good Day</div>
+                        <div class="barcode-number">8901030872574</div>
+                    </div>
+                    <div class="scan-date">2 weeks ago</div>
+                </div>
+
+                <div class="history-item" onclick="viewProductDetails('8901030733147')">
+                    <div class="product-info">
+                        <div class="product-name">Lay's Potato Chips</div>
+                        <div class="barcode-number">8901030733147</div>
+                    </div>
+                    <div class="scan-date">2 weeks ago</div>
+                </div>
+
+                <div class="history-item" onclick="viewProductDetails('8901063138292')">
+                    <div class="product-info">
+                        <div class="product-name">Amul Milk</div>
+                        <div class="barcode-number">8901063138292</div>
+                    </div>
+                    <div class="scan-date">3 weeks ago</div>
+                </div>
+
+                <!-- Empty state (hidden by default) -->
+                <div class="empty-history" id="emptyHistory" style="display: none;">
+                    <div class="empty-icon">📋</div>
+                    <div class="empty-text">No scan history yet</div>
+                    <div class="empty-subtext">Start scanning products to see your history here</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script defer src="./script/history1.js"></script>
+</body>
+</html>

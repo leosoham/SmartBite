@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Scanner - Home</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-item" onclick="navigateToProfile()">
+                <img src="./img/profile-icon.png" alt="Profile" class="sidebar-icon">
+                <span>Profile</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateToHistory()">
+                <img src="./img/history-icon.png" alt="History" class="sidebar-icon">
+                <span>History</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateToAbout()">
+                <img src="./img/about-icon.png" alt="About us" class="sidebar-icon">
+                <span>About us</span>
+            </div>
+            <div class="sidebar-item" onclick="logout()">
+                <img src="./img/logout-icon.png" alt="Logout" class="sidebar-icon">
+                <span>Logout</span>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="homepage-container">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <img src="./img/logo_3.png" alt="Food Scanner Logo" class="homepage-logo" id="homepageLogo">
+            <div class="logo-placeholder-home">Logo Here</div>
+        </div>
+
+        <!-- Barcode Image Section -->
+        <div class="barcode-image-section">
+        <!-- Barcode Image Section -->
+        <div class="barcode-image-section">
+            <img src="./img/scanner_icon.png" alt="Barcode Scanning" class="barcode-image" id="barcodeImage">
+        </div>
+
+
+        <!-- Action Buttons Section -->
+        <div class="action-buttons">
+            <!-- Scan Barcode Button -->
+            <button class="scan-btn" id="scanButton" onclick="goToScanner()">
+                Scan the Barcode
+            </button>
+
+            <!-- OR Text -->
+            <div class="or-text">OR</div>
+
+            <!-- Upload Button -->
+            <button class="upload-btn" id="uploadButton" onclick="goToScanner()">
+                Upload the Barcode image
+            </button>
+        </div>
+    </div>
+
+    <!-- Camera Modal -->
+    <div class="camera-modal" id="cameraModal">
+        <div class="camera-content">
+            <div class="camera-header">
+                <h3>Scan Barcode</h3>
+                <button class="close-camera" onclick="closeCamera()">&times;</button>
+            </div>
+            <div class="camera-view">
+                <video id="cameraVideo" autoplay playsinline></video>
+                <div class="scanning-overlay">
+                    <div class="scanning-line"></div>
+                </div>
+            </div>
+            <div class="camera-controls">
+                <button class="capture-btn" onclick="captureBarcode()">Capture</button>
+                <button class="cancel-btn" onclick="closeCamera()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden File Input -->
+    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+
+    <script src="./script/homepage.js" ></script>
+     <script>
+        
+     </script>
+</body>
+</html>

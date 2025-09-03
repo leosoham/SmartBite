@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Info - SmartBite</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Back Button -->
+    <div class="back-button" onclick="goBackToHomepage()">
+        <span class="back-arrow">←</span>
+        <span class="back-text">Scan again</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="product-info-container">
+        <!-- Product Header -->
+        <div class="product-header">
+            <h1 class="product-name" id="productName">Coca Cola</h1>
+            <div class="product-id-section">
+                <span class="product-id-label">Product ID</span>
+                <span class="product-id-value" id="productId">3948764012273</span>
+            </div>
+        </div>
+
+        <!-- Rating Box -->
+        <div class="rating-container">
+            <div class="rating-box bad" id="ratingBox">
+                <div class="rating-text" id="ratingText">BAD</div>
+                <div class="rating-description" id="ratingDescription">
+                    High in unhealthy ingredients<br>
+                    - Avoid regular use
+                </div>
+            </div>
+        </div>
+
+        <!-- Nutrition Facts -->
+        <div class="nutrition-section">
+            <h2 class="nutrition-heading">Nutrition Facts</h2>
+            <div class="nutrition-list" id="nutritionList">
+                <div class="nutrition-item">
+                    <span class="nutrient-name">Energy</span>
+                    <span class="nutrient-value">44.0 kcal</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrient-name">Total Sugars</span>
+                    <span class="nutrient-value">10.6 g</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrient-name">Added Sugars</span>
+                    <span class="nutrient-value">10.6 g</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrient-name">Sodium</span>
+                    <span class="nutrient-value">8.5 mg</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrient-name">Total Fats</span>
+                    <span class="nutrient-value">0.0 g</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrient-name">Carbohydrates</span>
+                    <span class="nutrient-value">10.9 g</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="nutrient-name">Protein</span>
+                    <span class="nutrient-value">0.0 g</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script/product-info.js"></script>
+</body>
+</html>

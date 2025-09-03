@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Food Scanner</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container">
+        <div class="auth-card">
+            <!-- Logo placeholder -->
+            <div class="logo-container">
+                <img src="./img/logo_3.png" alt="Food Scanner Logo" class="logo" id="logo">
+                <div class="logo-placeholder">Logo Here</div>
+            </div>
+            
+            <h1 class="page-title">Sign Up</h1>
+            
+            <form class="auth-form" id="signinForm">
+                <div class="input-group">
+                    <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="newUsername" name="newUsername" placeholder="Username" required>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" id="createPassword" name="createPassword" placeholder="Create Password" required>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+                </div>
+                
+                <button type="submit" class="login-btn">Sign Up</button>
+                
+                <p class="auth-link">
+                    Already have an account? <a href="/">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+    
+    <script src="./script/script.js"></script>
+    <!-- <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const signinForm = document.getElementById('signinForm');
+    
+    if (signinForm) {
+        signinForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Stop form from submitting normally
+            
+            // Get form data
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const username = document.getElementById('newUsername').value;
+            const password = document.getElementById('createPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Basic validation
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            if (username.length < 3) {
+                alert('Username must be at least 3 characters long');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long');
+                return;
+            }
+            
+            // Success message
+            
+            
+            // Redirect to login page
+            if (response.ok) {
+        alert("Account created successfully! Redirecting to login...");
+        window.location.href = "login.html"; // or /login route
+}
+
+        });
+    }
+});
+</script> -->
+
+<script>
+let accessToken = null; // in-memory storage (resets on page refresh)
+
+document.addEventListener('DOMContentLoaded', function() {
+    const signinForm = document.getElementById('signinForm');
+
+    if (signinForm) {
+        signinForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const username = document.getElementById('newUsername').value;
+            const password = document.getElementById('createPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Basic validation
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            if (username.length < 3) {
+                alert('Username must be at least 3 characters long');
+                return;
+            }
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long');
+                return;
+            }
+
+            const namee = `${firstName} ${lastName}`
+
+            try {
+                // Send request to backend
+                const response = await fetch("http://localhost:3500/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user: username, pwd: password, rname: namee })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    alert(data.message || "Error creating account!");
+                    return;
+                }
+
+                // Store access token in memory
+                accessToken = data.accessToken;
+                console.log("Access Token (in memory):", accessToken);
+
+                alert('Account created successfully! Please log in.');
+
+                // Redirect to login page
+                window.location.href = '/';
+            } catch (err) {
+                console.error("Signup error:", err);
+                alert("Something went wrong!");
+            }
+        });
+    }
+});
+</script>
+
+
+</body>
+</html>

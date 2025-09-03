@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Food Scanner</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+    <style>
+        /* Error box styles */
+        .error-box {
+            background-color: #fee;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            color: #721c24;
+            padding: 12px 16px;
+            margin: 10px 0;
+            font-size: 14px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .error-box.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Add some spacing for better visual hierarchy */
+        .auth-form {
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="auth-card">
+            <!-- Logo placeholder -->
+            <div class="logo-container">
+                <img src="./img/logo_3.png" alt="Food Scanner Logo" class="logo" id="logo">
+                <div class="logo-placeholder">Logo Here</div>
+            </div>
+
+            <h1 class="page-title">Login</h1>
+
+            <form class="auth-form" id="loginForm">
+                <div class="input-group">
+                    <input type="text" id="username" name="username" placeholder="Username" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                </div>
+
+                <!-- Error box -->
+                <div class="error-box" id="errorBox">
+                    <span id="errorMessage"></span>
+                </div>
+
+                <button type="submit" class="login-btn">Login</button>
+
+                <p class="auth-link">
+                    Don't have an account? <a href="/register">Sign up here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- <script src="./script/script.js"></script> -->
+
+    <script>
+        let accessToken = null; // in-memory storage (resets on refresh)
+
+        // Function to show error message
+        function showError(message) {
+            const errorBox = document.getElementById('errorBox');
+            const errorMessage = document.getElementById('errorMessage');
+
+            errorMessage.textContent = message;
+            errorBox.classList.add('show');
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                hideError();
+            }, 5000);
+        }
+
+        // Function to hide error message
+        function hideError() {
+            const errorBox = document.getElementById('errorBox');
+            errorBox.classList.remove('show');
+        }
+
+
+        
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.getElementById('loginForm');
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', async function (event) {
+                    event.preventDefault();
+
+                    // Hide any previous errors
+                    hideError();
+
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+
+                    // Frontend validation
+                    if (!username || username.length < 3) {
+                        showError('Please enter a valid username (min 3 characters)');
+                        return;
+                    }
+                    if (!password || password.length < 6) {
+                        showError('Please enter a valid password (min 6 characters)');
+                        return;
+                    }
+
+                    try {
+                        // Send login request to backend
+                        const response = await fetch("http://localhost:3500/", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ "user": username, "pwd": password }),
+                            credentials: "include" // ✅ so refreshToken cookie is saved
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            showError(data.message || "Login failed! Please check your credentials.");
+                            return;
+                        }
+
+                        // Store access token in memory
+                        //accessToken = data.accessToken;
+                        //console.log("Access Token:", accessToken);
+
+                        // Redirect to homepage
+                        // Store access token in memory
+                        accessToken = data.accessToken;
+                        console.log("Access Token:", accessToken);
+                        localStorage.setItem("accessToken", data.accessToken);
+                        localStorage.setItem("user", username);
+
+                        // ✅ Fetch homepage.html with token and load it into the page
+                        try {
+                            const homepageResponse = await fetch("/home", {
+                                method: "GET",
+                                headers: {
+                                    Authorization: `Bearer ${accessToken}`
+                                }
+                            });
+
+                            if (homepageResponse.ok) {
+                                const homepageContent = await homepageResponse.text();
+                               // window.location.href = "http://localhost:3500/history";
+
+                                document.open();
+                                document.write(homepageContent);
+                                document.close();
+                            } else {
+                                showError("Failed to load homepage.");
+                            }
+                        } catch (err) {
+                            console.error("Homepage fetch error:", err);
+                            showError("Could not load homepage.");
+                        }
+
+
+                    } catch (err) {
+                        console.error("Login error:", err);
+                        showError("Connection failed. Please check your internet connection and try again.");
+                    }
+                });
+
+                // Hide error when user starts typing
+                const inputs = document.querySelectorAll('#username, #password');
+                inputs.forEach(input => {
+                    input.addEventListener('input', hideError);
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

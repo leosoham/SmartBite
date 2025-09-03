@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Food Scanner</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container">
+        <div class="auth-card">
+            <!-- Logo placeholder -->
+            <div class="logo-container">
+                <img src="./img/logo_3.png" alt="Food Scanner Logo" class="logo" id="logo">
+                <div class="logo-placeholder">Logo Here</div>
+            </div>
+            
+            <h1 class="page-title">Login</h1>
+            
+            <form class="auth-form" id="loginForm">
+                <div class="input-group">
+                    <input type="text" id="username" name="username" placeholder="Username" required>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                </div>
+                
+                <button type="submit" class="login-btn">Login</button>
+                
+                <p class="auth-link">
+                    Don't have an account? <a href="/register">Sign up here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+    
+    <script src="./script/script.js"></script>
+<!-- <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || username.length < 3) {
+                alert('Please enter a valid username (min 3 characters)');
+                return;
+            }
+            
+            if (!password || password.length < 6) {
+                alert('Please enter a valid password (min 6 characters)');
+                return;
+            }
+
+            
+            window.location.href = 'homepage.html';
+
+        });
+    }
+});
+</script> -->
+
+<script>
+let accessToken = null; // in-memory storage (resets on refresh)
+
+document.addEventListener('DOMContentLoaded', function () {
+    const loginForm = document.getElementById('loginForm');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Frontend validation
+            if (!username || username.length < 3) {
+                alert('Please enter a valid username (min 3 characters)');
+                return;
+            }
+            if (!password || password.length < 6) {
+                alert('Please enter a valid password (min 6 characters)');
+                return;
+            }
+
+            try {
+                // Send login request to backend
+                const response = await fetch("http://localhost:3500/auth", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user: username, pwd: password }),
+                    credentials: "include" // ✅ so refreshToken cookie is saved
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    alert(data.message || "Login failed!");
+                    return;
+                }
+
+                // Store access token in memory
+                accessToken = data.accessToken;
+                console.log("Access Token:", accessToken);
+
+                // Redirect to homepage
+                alert("Login successful!");
+                window.location.href = "homepage.html";
+
+            } catch (err) {
+                console.error("Login error:", err);
+                alert("Something went wrong. Please try again.");
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>

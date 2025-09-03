@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - SmartBite</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Back Button -->
+    <div class="back-button" onclick="goBackToHomepage()">
+        <span class="back-arrow">←</span>
+        <span class="back-text">Back</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <span class="avatar-text" id="avatarText">U</span>
+            </div>
+            <h1 class="profile-title">My Profile</h1>
+        </div>
+
+        <!-- Profile Information -->
+        <div class="profile-content">
+            <div class="profile-form">
+                <!-- First Name -->
+                <div class="profile-field">
+                    <label class="field-label">First Name</label>
+                    <div class="field-value">
+                        <input type="text" id="firstName" value="John" readonly>
+                        <button class="edit-btn" onclick="editField('firstName')">
+                            <img src="./img/pencil.png" alt="Edit" class="icon-img">
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Last Name -->
+                <div class="profile-field">
+                    <label class="field-label">Last Name</label>
+                    <div class="field-value">
+                        <input type="text" id="lastName" value="Doe" readonly>
+                        <button class="edit-btn" onclick="editField('lastName')">
+                            <img src="./css/pencil.png" alt="Edit" class="icon-img">
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Username -->
+                <div class="profile-field">
+                    <label class="field-label">Username</label>
+                    <div class="field-value">
+                        <input type="text" id="username" value="johndoe123" readonly>
+                        <button class="edit-btn" onclick="editField('username')">
+                            <img src="./img/pencil.png" alt="Edit" class="icon-img">
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="profile-field">
+                    <label class="field-label">Password</label>
+                    <div class="field-value password-field">
+                        <input type="password" id="password" value="mypassword123" readonly>
+                        <button class="eye-btn" onclick="togglePassword()" id="eyeBtn">
+                            <img src="./img/eye.png" alt="Show Password" class="icon-img" id="eyeIcon">
+                        </button>
+                        <!-- <button class="edit-btn" onclick="editField('password')">
+                            <img src="./img/pencil.png" alt="Edit" class="icon-img">
+                        </button> -->
+                    </div>
+                </div>
+
+                <!-- Save/Cancel Buttons (Hidden by default) -->
+                <div class="action-buttons" id="actionButtons" style="display: none;">
+                    <button class="save-btn" onclick="saveChanges()">Save Changes</button>
+                    <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./script/profile.js"></script>
+</body>
+</html>
