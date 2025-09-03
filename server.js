@@ -67,7 +67,8 @@ app.use(errorHandler);
 if (process.env.NODE_ENV !== 'production') {
   connectToDatabase()
     .then(() => {
-      app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+      const serverPort = PORT;
+      app.listen(serverPort, () => console.log(`Server running on port ${serverPort} - Access at http://localhost:${serverPort}`));
     })
     .catch((err) => {
       console.error('Failed to connect to MongoDB:', err.message);

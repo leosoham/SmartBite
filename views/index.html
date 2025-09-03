@@ -169,15 +169,14 @@
                         //accessToken = data.accessToken;
                         //console.log("Access Token:", accessToken);
 
-                        // Redirect to homepage
                         // Store access token in memory
                         accessToken = data.accessToken;
                         console.log("Access Token:", accessToken);
                         localStorage.setItem("accessToken", data.accessToken);
                         localStorage.setItem("user", username);
 
-                        // Redirect to homepage so scripts and assets load normally
-                        window.location.href = "/home";
+                        // Redirect to scanner page
+                        window.location.href = "/scanner";
 
 
                     } catch (err) {

@@ -146,10 +146,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 accessToken = data.accessToken;
                 console.log("Access Token (in memory):", accessToken);
 
-                alert('Account created successfully! Please log in.');
+                alert('Account created successfully! Logging you in...');
 
-                // Redirect to login page
-                window.location.href = '/';
+                // Login the user automatically after successful registration
+                try {
+                    const loginResponse = await fetch("/", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ "user": username, "pwd": password }),
+                        credentials: "include"
+                    });
+
+                    const loginData = await loginResponse.json();
+
+                    if (!loginResponse.ok) {
+                        alert("Registration successful but automatic login failed. Please log in manually.");
+                        window.location.href = '/';
+                        return;
+                    }
+
+                    // Store access token in memory
+                    accessToken = loginData.accessToken;
+                    console.log("Access Token:", accessToken);
+                    localStorage.setItem("accessToken", loginData.accessToken);
+                    localStorage.setItem("user", username);
+
+                    // Redirect to scanner page
+                    window.location.href = '/scanner';
+                } catch (err) {
+                    console.error("Auto-login error:", err);
+                    alert("Registration successful but automatic login failed. Please log in manually.");
+                    window.location.href = '/';
+                }
             } catch (err) {
                 console.error("Signup error:", err);
                 alert("Something went wrong!");

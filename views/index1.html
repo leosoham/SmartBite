@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             try {
                 // Send login request to backend
-                const response = await fetch("http://localhost:3500/auth", {
+                const response = await fetch("/auth", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ user: username, pwd: password }),
