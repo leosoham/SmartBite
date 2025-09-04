@@ -2,10 +2,16 @@
 let isEditing = false;
 let originalValues = {};
 
+// Add loading state variables
+let isLoading = false;
+let loadingAttempts = 0;
+const MAX_LOADING_ATTEMPTS = 3;
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Load user data (in a real app, this would come from your backend)
+    // Show loading state
+    showLoadingState();
+    // Load user data from backend
     loadUserData();
-    updateAvatar();
 });
 
 // Back button functionality
@@ -19,37 +25,135 @@ function goBackToHomepage() {
     }
 }
 
-// Load user data (simulate API call)
-async function loadUserData() {
-    // In a real application, you would fetch this from your backend
-    const user = localStorage.user
-    const token = localStorage.accessToken
-    const response = await fetch(`/info?user=${encodeURIComponent(user)}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      }
-      // body: JSON.stringify({ user })
+// Show loading state
+function showLoadingState() {
+    isLoading = true;
+    // Disable all input fields and buttons
+    const fields = ['firstName', 'lastName', 'username', 'password'];
+    fields.forEach(id => {
+        const field = document.getElementById(id);
+        field.setAttribute('readonly', true);
+        field.classList.add('loading');
+        field.value = 'Loading...';
     });
-    console.log("here is user" + user)
-
-    if (!response.ok) throw new Error("Failed to fetch codes");
-    const userData = await response.json(); // array like [2323, 34343, 46356]
-    console.log(userData)
-    // historyList.innerHTML = "";
-
-   
     
-    // Populate fields
-    document.getElementById('firstName').value = userData.firstName;
-    document.getElementById('lastName').value = userData.lastName;
-    document.getElementById('username').value = userData.username;
-    document.getElementById('password').value = userData.password;
-
-     const firstName = document.getElementById('firstName').value;
+    // Disable edit buttons
+    const editButtons = document.querySelectorAll('.edit-btn');
+    editButtons.forEach(btn => {
+        btn.disabled = true;
+    });
+    
+    // Update avatar
     const avatarText = document.getElementById('avatarText');
-    avatarText.textContent = firstName ? firstName.charAt(0).toUpperCase() : 'U';
+    avatarText.textContent = '⟳';
+    avatarText.classList.add('loading-spin');
+}
+
+// Hide loading state
+function hideLoadingState() {
+    isLoading = false;
+    // Re-enable edit buttons
+    const editButtons = document.querySelectorAll('.edit-btn');
+    editButtons.forEach(btn => {
+        btn.disabled = false;
+    });
+    
+    // Remove loading class from fields
+    const fields = ['firstName', 'lastName', 'username', 'password'];
+    fields.forEach(id => {
+        const field = document.getElementById(id);
+        field.classList.remove('loading');
+    });
+    
+    // Remove loading animation from avatar
+    const avatarText = document.getElementById('avatarText');
+    avatarText.classList.remove('loading-spin');
+}
+
+// Load user data from backend
+async function loadUserData() {
+    loadingAttempts++;
+    isLoading = true;
+    
+    try {
+        const user = localStorage.getItem('user');
+        const token = localStorage.getItem('accessToken');
+        
+        if (!user || !token) {
+            console.error('Missing user or token');
+            setDefaultUserData();
+            return;
+        }
+        
+        console.log("Loading data for user: " + user);
+        
+        const response = await fetch(`/info?user=${encodeURIComponent(user)}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            // Add timeout to prevent hanging requests
+            signal: AbortSignal.timeout(5000) // 5 second timeout
+        });
+        
+        if (!response.ok) {
+            console.error(`Failed to fetch user data: ${response.status} ${response.statusText}`);
+            throw new Error(`Failed to fetch user data: ${response.status}`);
+        }
+        
+        const userData = await response.json();
+        console.log("User data loaded:", userData);
+        
+        if (!userData || !userData.username) {
+            console.error('Invalid user data received');
+            throw new Error('Invalid user data');
+        }
+        
+        // Populate fields
+        document.getElementById('firstName').value = userData.firstName || '';
+        document.getElementById('lastName').value = userData.lastName || '';
+        document.getElementById('username').value = userData.username || '';
+        document.getElementById('password').value = userData.password || '';
+        
+        // Update avatar
+        updateAvatar();
+        
+        // Reset loading state
+        hideLoadingState();
+        loadingAttempts = 0;
+        
+    } catch (error) {
+        console.error('Error loading user data:', error);
+        
+        // If we haven't exceeded max attempts, try again
+        if (loadingAttempts < MAX_LOADING_ATTEMPTS) {
+            console.log(`Retrying load (attempt ${loadingAttempts + 1} of ${MAX_LOADING_ATTEMPTS})...`);
+            setTimeout(loadUserData, 1000); // Wait 1 second before retrying
+        } else {
+            // Max attempts reached, show default data
+            console.warn('Max loading attempts reached, using default data');
+            setDefaultUserData();
+        }
+    }
+}
+
+// Set default user data when loading fails
+function setDefaultUserData() {
+    // Get username from localStorage at minimum
+    const username = localStorage.getItem('user') || 'User';
+    
+    // Set minimal data
+    document.getElementById('firstName').value = 'User';
+    document.getElementById('lastName').value = '';
+    document.getElementById('username').value = username;
+    document.getElementById('password').value = '********';
+    
+    // Update avatar
+    updateAvatar();
+    
+    // Hide loading state
+    hideLoadingState();
 }
 
 // Update avatar with first letter of first name

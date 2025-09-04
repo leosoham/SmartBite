@@ -821,6 +821,22 @@ html {
     background-color: #ffffff;
 }
 
+/* Loading state styles */
+.loading-spin {
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+input.loading {
+    color: #888;
+    background-color: #f0f0f0;
+    border-color: #ddd;
+}
+
 .field-value input[readonly] {
     background-color: #f8f8f8;
     cursor: default;
