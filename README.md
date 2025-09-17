@@ -1,5 +1,9 @@
 # Foodie - Food Information App
 
+### Hosted Website Link
+
+[Website Link](https://smart-bite-qvxu.vercel.app/)
+
 ## Deployment to Vercel
 
 This application has been configured to be deployed on Vercel. Follow these steps to deploy:
