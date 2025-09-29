@@ -111,10 +111,10 @@ async function loadUserData() {
         }
         
         // Populate fields
-        document.getElementById('firstName').value = userData.firstName || '';
+        document.getElementById('firstName').value = userData.firstName || 'User';
         document.getElementById('lastName').value = userData.lastName || '';
         document.getElementById('username').value = userData.username || '';
-        document.getElementById('password').value = userData.password || '';
+        document.getElementById('password').value = '********';
         
         // Update avatar
         updateAvatar();

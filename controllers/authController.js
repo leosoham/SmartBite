@@ -20,6 +20,8 @@ const handleLogin = async (req, res) => {
             const roles = Object.values(foundUser.roles);
             
             // create JWTs
+            const accessSecret = process.env.ACCESS_TOKEN_SECRET || 'dev_access_secret_change_me';
+            const refreshSecret = process.env.REFRESH_TOKEN_SECRET || 'dev_refresh_secret_change_me';
             const accessToken = jwt.sign(
                 {
                     "UserInfo": {
@@ -27,13 +29,13 @@ const handleLogin = async (req, res) => {
                         "roles": roles
                     }
                 },
-                process.env.ACCESS_TOKEN_SECRET,
+                accessSecret,
                 { expiresIn: '30m' }
             );
             
             const refreshToken = jwt.sign(
                 { "username": foundUser.username },
-                process.env.REFRESH_TOKEN_SECRET,
+                refreshSecret,
                 { expiresIn: '1d' }
             );
             
@@ -43,7 +45,13 @@ const handleLogin = async (req, res) => {
                 { $set: { refreshToken: refreshToken } }
             );
             
-            res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
+            const isProd = process.env.NODE_ENV === 'production';
+            res.cookie('jwt', refreshToken, {
+                httpOnly: true,
+                sameSite: isProd ? 'None' : 'Lax',
+                secure: isProd,
+                maxAge: 24 * 60 * 60 * 1000
+            });
             res.json({ accessToken });
         } else {
             res.sendStatus(401);

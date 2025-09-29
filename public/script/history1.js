@@ -113,7 +113,8 @@ async function loadHistory() {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
-      }
+      },
+      signal: AbortSignal.timeout(6000)
     });
     console.log("User: " + user);
 
@@ -190,6 +191,13 @@ function retryLoadHistory() {
 
 // Load on page ready and set up retry mechanism
 document.addEventListener("DOMContentLoaded", () => {
+  // show skeleton while loading
+  emptyHistory.style.display = "block";
+  const loader = document.createElement('div');
+  loader.className = 'empty-subtext';
+  loader.textContent = 'Loading...';
+  emptyHistory.appendChild(loader);
+  
   loadHistory();
   
   // If history fails to load initially, try again after a short delay

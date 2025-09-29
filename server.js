@@ -35,7 +35,7 @@ app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, '/public')));
 
 // routes
-// app.use('/', require('./routes/root'));
+ //app.use('/', require('./routes/root'));
 app.use('^/register$', require('./routes/register'));
 app.use('/', require('./routes/auth'));
 app.use('/refresh', require('./routes/refresh'));
@@ -87,3 +87,5 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export the Express app for Vercel serverless deployment
 module.exports = app;
+
+//app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
