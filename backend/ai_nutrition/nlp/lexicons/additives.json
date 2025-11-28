@@ -1,0 +1,18 @@
+{
+	"e100": { "name": "Curcumin", "risk": "low", "aliases": ["curcumin"] },
+	"e102": { "name": "Tartrazine", "risk": "medium", "aliases": ["tartrazine", "yellow 5"] },
+	"e110": { "name": "Sunset Yellow FCF", "risk": "medium", "aliases": ["sunset yellow", "yellow 6"] },
+	"e123": { "name": "Amaranth", "risk": "high", "aliases": ["amaranth dye"] },
+	"e124": { "name": "Ponceau 4R", "risk": "medium", "aliases": ["ponceau 4r"] },
+	"e129": { "name": "Allura Red", "risk": "medium", "aliases": ["allura red", "red 40"] },
+	"e211": { "name": "Sodium Benzoate", "risk": "medium", "aliases": ["sodium benzoate"] },
+	"e250": { "name": "Sodium Nitrite", "risk": "high", "aliases": ["sodium nitrite", "nitrite"] },
+	"e251": { "name": "Sodium Nitrate", "risk": "high", "aliases": ["sodium nitrate", "nitrate"] },
+	"brominatedvegetableoil": { "name": "Brominated Vegetable Oil", "risk": "high", "aliases": ["bvo", "brominated vegetable oil"] },
+	"potassiumbromate": { "name": "Potassium Bromate", "risk": "high", "aliases": ["potassium bromate"] },
+	"azodicarbonamide": { "name": "Azodicarbonamide", "risk": "high", "aliases": ["azodicarbonamide"] },
+	"bht": { "name": "Butylated Hydroxytoluene", "risk": "medium", "aliases": ["bht"] },
+	"bha": { "name": "Butylated Hydroxyanisole", "risk": "medium", "aliases": ["bha"] },
+	"propylene glycol": { "name": "Propylene Glycol", "risk": "medium", "aliases": ["propylene glycol"] }
+}
+

@@ -1522,3 +1522,235 @@ input.loading {
         font-size: 16px;
     }
 }
+
+/* NLP Analysis Section */
+.nlp-section {
+    width: 100%;
+    padding: 0 5px;
+    margin-top: 30px;
+}
+
+.nlp-heading {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 20px 0;
+    text-align: left;
+}
+
+.nlp-content {
+    background-color: #fafafa;
+    border-radius: 12px;
+    padding: 20px;
+    width: 100%;
+}
+
+.nlp-category {
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    border-left: 4px solid #ccc;
+}
+
+.nlp-category-risky {
+    border-left-color: #e74c3c;
+    background-color: #fef5f5;
+}
+
+.nlp-category-neutral {
+    border-left-color: #f39c12;
+    background-color: #fffbf0;
+}
+
+.nlp-category-healthy {
+    border-left-color: #27ae60;
+    background-color: #f0fdf4;
+}
+
+.nlp-category-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 12px 0;
+}
+
+.nlp-ingredients-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nlp-ingredient-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.nlp-ingredient-item:last-child {
+    border-bottom: none;
+}
+
+.nlp-ingredient-name {
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+}
+
+.nlp-risk-level {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    width: fit-content;
+}
+
+.nlp-risk-high {
+    color: #c0392b;
+    background-color: #fadbd8;
+}
+
+.nlp-risk-medium {
+    color: #d68910;
+    background-color: #fdebd0;
+}
+
+.nlp-risk-low {
+    color: #27ae60;
+    background-color: #d5f4e6;
+}
+
+.nlp-evidence {
+    font-size: 13px;
+    color: #666;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+.nlp-notes {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.nlp-notes h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 10px 0;
+}
+
+.nlp-notes ul {
+    list-style: disc;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.nlp-notes li {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.nlp-no-data {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .nlp-section {
+        padding: 0 3px;
+    }
+    
+    .nlp-heading {
+        font-size: 22px;
+    }
+    
+    .nlp-category-title {
+        font-size: 17px;
+    }
+    
+    .nlp-ingredient-name {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nlp-section {
+        padding: 0 2px;
+    }
+    
+    .nlp-heading {
+        font-size: 20px;
+    }
+    
+    .nlp-category {
+        padding: 12px;
+    }
+    
+    .nlp-category-title {
+        font-size: 16px;
+    }
+    
+    .nlp-ingredient-name {
+        font-size: 14px;
+    }
+}
+
+/* Loading Screen Styles */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #e0e0e0;
+    border-top-color: #4ECC57;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 10px 0;
+}
+
+.loading-subtext {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+}

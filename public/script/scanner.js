@@ -9,6 +9,21 @@ const stopBtn = document.getElementById("stopBtn");
 const fileInput = document.getElementById("fileInput");
 const productDetailsEl = document.getElementById("productDetails");
 
+// Loading screen functions
+function showLoadingScreen() {
+  const loadingScreen = document.getElementById('loadingScreen');
+  if (loadingScreen) {
+    loadingScreen.style.display = 'flex';
+  }
+}
+
+function hideLoadingScreen() {
+  const loadingScreen = document.getElementById('loadingScreen');
+  if (loadingScreen) {
+    loadingScreen.style.display = 'none';
+  }
+}
+
 // New button for scanning again
 let scanAgainBtn;
 if (!document.getElementById("scanAgainBtn")) {
@@ -157,12 +172,14 @@ fileInput.addEventListener("change", async () => {
   
   console.log('File selected:', file.name, file.type, file.size);
   statusEl.textContent = "Processing image…";
+  showLoadingScreen();
 
   try {
     // Method 1: Try QuaggaJS first
     const barcode = await tryQuaggaDetection(file);
     if (barcode) {
       console.log('Barcode detected with QuaggaJS:', barcode);
+      hideLoadingScreen();
       handleSuccessfulDetection(barcode);
       return;
     }
@@ -171,6 +188,7 @@ fileInput.addEventListener("change", async () => {
     const barcode2 = await tryQuaggaWithDifferentSettings(file);
     if (barcode2) {
       console.log('Barcode detected with alternative settings:', barcode2);
+      hideLoadingScreen();
       handleSuccessfulDetection(barcode2);
       return;
     }
@@ -179,19 +197,33 @@ fileInput.addEventListener("change", async () => {
     const barcode3 = await tryWithImagePreprocessing(file);
     if (barcode3) {
       console.log('Barcode detected with preprocessing:', barcode3);
+      hideLoadingScreen();
       handleSuccessfulDetection(barcode3);
+      return;
+    }
+
+    // Method 4: Fallback to OCR if barcode detection fails
+    console.log('Barcode detection failed, trying OCR...');
+    statusEl.textContent = "No barcode found. Analyzing label with OCR...";
+    const ocrResult = await tryOCRDetection(file);
+    if (ocrResult) {
+      console.log('OCR analysis successful:', ocrResult);
+      hideLoadingScreen();
+      handleOCRResult(ocrResult);
       return;
     }
 
     // If all methods fail
     console.log('All detection methods failed');
-    statusEl.textContent = "Could not detect a barcode. Please try a clearer image or use manual input.";
+    hideLoadingScreen();
+    statusEl.textContent = "Could not detect a barcode or analyze the label. Please try a clearer image or use manual input.";
     
     // Show manual input option
     showManualInputOption();
     
   } catch (error) {
     console.error('Error in image processing:', error);
+    hideLoadingScreen();
     statusEl.textContent = "Error processing image. Please try again.";
   }
 });
@@ -326,6 +358,50 @@ function handleSuccessfulDetection(barcode) {
   console.log('Redirecting to product-info with barcode:', barcode);
   addSearch(barcode)
   window.location.href = `/product-info?barcode=${barcode}`;
+}
+
+// Method 4: OCR detection as fallback
+async function tryOCRDetection(file) {
+  try {
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('language', 'en');
+    formData.append('aggressiveness', 'balanced');
+
+    const response = await fetch('/ai/analyze-multipart', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      console.error('OCR API error:', response.status, response.statusText);
+      return null;
+    }
+
+    const result = await response.json();
+    console.log('OCR result:', result);
+    
+    // Check if we got useful data
+    if (result && (result.ingredients_text || result.product)) {
+      return result;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error in OCR detection:', error);
+    return null;
+  }
+}
+
+// Handle OCR result (no barcode, but we have product info from OCR)
+function handleOCRResult(ocrResult) {
+  statusEl.textContent = "Label analyzed successfully!";
+  
+  // Store OCR result in sessionStorage to pass to product-info page
+  sessionStorage.setItem('ocrProductData', JSON.stringify(ocrResult));
+  
+  // Redirect to product-info page with a special flag
+  window.location.href = '/product-info?ocr=true';
 }
 
 // Show manual input option when detection fails

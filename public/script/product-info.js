@@ -8,16 +8,50 @@ function goBackToHomepage() {
     window.location.href = '/home';
 }
 
-// Initialize: read barcode and fetch from Open Food Facts, fallback to sample
+// Loading screen functions
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
+    }
+}
+
+function showLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.classList.remove('hidden');
+    }
+}
+
+// Initialize: read barcode and fetch from Open Food Facts, fallback to sample or OCR
 async function initializeProductInfo() {
     const urlParams = new URLSearchParams(window.location.search);
     const barcode = urlParams.get('barcode');
-    console.log(`here is the obtained code from the params ${barcode}`)
+    const isOCR = urlParams.get('ocr') === 'true';
+    console.log(`here is the obtained code from the params ${barcode}, OCR mode: ${isOCR}`)
+
+    // Check for OCR data first
+    if (isOCR) {
+        const ocrDataStr = sessionStorage.getItem('ocrProductData');
+        if (ocrDataStr) {
+            try {
+                const ocrData = JSON.parse(ocrDataStr);
+                sessionStorage.removeItem('ocrProductData'); // Clean up
+                const productData = convertOCRDataToProductData(ocrData);
+                updateProductDisplay(productData);
+                hideLoadingScreen();
+                return;
+            } catch (e) {
+                console.error('Error parsing OCR data:', e);
+            }
+        }
+    }
 
     if (!barcode) {
         // No barcode param; keep graceful sample for now
         const productData = getSampleProduct('3948764012273');
         updateProductDisplay(productData);
+        hideLoadingScreen();
         return;
     }
 
@@ -36,7 +70,20 @@ async function initializeProductInfo() {
             offData = await fetchOpenFoodFacts(eanCandidate, 'v2') || await fetchOpenFoodFacts(eanCandidate, 'v0');
         }
 
-        if (offData) return updateProductDisplay(offData);
+        if (offData) {
+            updateProductDisplay(offData);
+            // Call NLP service if ingredients are available
+            console.log('Product data loaded:', offData);
+            console.log('Ingredients text available:', offData.ingredientsText);
+            if (offData.ingredientsText && offData.ingredientsText.trim().length > 0) {
+                console.log('Calling NLP analysis...');
+                await fetchNLPAnalysis(offData.ingredientsText, barcode);
+            } else {
+                console.log('No ingredients text available, skipping NLP analysis');
+            }
+            hideLoadingScreen();
+            return;
+        }
 
         // If still not found, show explicit not-found with scanned barcode
         updateProductDisplay({
@@ -46,6 +93,7 @@ async function initializeProductInfo() {
             ratingNote: 'Nutrition info missing for this product.',
             nutrition: { 'Nutrition': 'N/A' }
         });
+        hideLoadingScreen();
     } catch (e) {
         console.error('Error loading product from OFF:', e);
         updateProductDisplay({
@@ -55,6 +103,7 @@ async function initializeProductInfo() {
             ratingNote: 'Not enough data to calculate rating.',
             nutrition: { 'Nutrition': 'N/A' }
         });
+        hideLoadingScreen();
     }
 }
 
@@ -208,7 +257,8 @@ async function fetchOpenFoodFacts(barcode, version) {
         id: p.code || barcode,
         rating,
         ratingNote,
-        nutrition
+        nutrition,
+        ingredientsText: ingredientsText
     };
 }
 
@@ -393,6 +443,222 @@ function updateNutritionFacts(nutritionData) {
         
         nutritionList.appendChild(nutritionItem);
     });
+}
+
+// Convert OCR API response to product data format
+function convertOCRDataToProductData(ocrData) {
+    const product = ocrData.product || {};
+    const nlp = ocrData.nlp || {};
+    const nutritionFacts = ocrData.nutrition_facts || {};
+    const ingredientsText = ocrData.ingredients_text || '';
+    
+    // Build nutrition display from OCR-extracted nutrition facts
+    const nutrition = {};
+    if (nutritionFacts.energy != null) {
+        nutrition['Energy'] = `${nutritionFacts.energy.toFixed(0)} kcal`;
+    }
+    if (nutritionFacts.fat != null) {
+        nutrition['Total Fats'] = `${nutritionFacts.fat.toFixed(1)} g / 100g`;
+    }
+    if (nutritionFacts.saturated_fat != null) {
+        nutrition['Saturated Fat'] = `${nutritionFacts.saturated_fat.toFixed(1)} g / 100g`;
+    }
+    if (nutritionFacts.sugars != null) {
+        nutrition['Total Sugars'] = `${nutritionFacts.sugars.toFixed(1)} g / 100g`;
+    }
+    if (nutritionFacts.salt != null) {
+        nutrition['Salt'] = `${nutritionFacts.salt.toFixed(3)} g / 100g`;
+        // Also add sodium
+        const sodiumMg = Math.round(nutritionFacts.salt * 1000);
+        nutrition['Sodium'] = `${sodiumMg} mg / 100g`;
+    }
+    if (nutritionFacts.protein != null) {
+        nutrition['Protein'] = `${nutritionFacts.protein.toFixed(1)} g / 100g`;
+    }
+    if (nutritionFacts.carbohydrates != null) {
+        nutrition['Carbohydrates'] = `${nutritionFacts.carbohydrates.toFixed(1)} g / 100g`;
+    }
+    
+    if (Object.keys(nutrition).length === 0) {
+        nutrition['Nutrition'] = 'Nutrition facts extracted from label (may be incomplete)';
+    }
+    
+    // Calculate rating from nutrition facts and ingredients
+    let rating = 'AVERAGE';
+    let ratingNote = 'Analyzed from label';
+    
+    if (Object.keys(nutritionFacts).length > 0 || ingredientsText) {
+        const detailed = computeDetailedRating({
+            fat: nutritionFacts.fat,
+            satFat: nutritionFacts.saturated_fat,
+            sugar: nutritionFacts.sugars,
+            salt: nutritionFacts.salt,
+            ingredientsText: ingredientsText,
+            additivesTags: []
+        });
+        rating = detailed.categoryToUi;
+        ratingNote = detailed.note || 'Analyzed from label';
+    }
+    
+    // Build product name
+    let productName = product.name || 'Product from Label';
+    if (ocrData.category) {
+        productName += ` (${ocrData.category})`;
+    }
+    
+    return {
+        name: productName,
+        id: product.id || 'N/A (OCR)',
+        rating: rating,
+        ratingNote: ratingNote,
+        nutrition: nutrition,
+        category: ocrData.category || null
+    };
+}
+
+// Fetch NLP analysis from AI service
+async function fetchNLPAnalysis(ingredientsText, barcode) {
+    try {
+        console.log('Fetching NLP analysis for ingredients:', ingredientsText);
+        const response = await fetch('/ai/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                barcode: barcode,
+                ingredients_text: ingredientsText,
+                language: 'en',
+                aggressiveness: 'balanced'
+            })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('NLP API error:', response.status, response.statusText);
+            console.error('Error details:', errorText);
+            return;
+        }
+
+        const result = await response.json();
+        console.log('NLP analysis result:', result);
+        
+        if (result && result.nlp) {
+            console.log('Displaying NLP analysis...');
+            displayNLPAnalysis(result.nlp);
+        } else {
+            console.warn('NLP result missing or invalid:', result);
+        }
+    } catch (error) {
+        console.error('Error fetching NLP analysis:', error);
+    }
+}
+
+// Display NLP analysis results
+function displayNLPAnalysis(nlpData) {
+    const ingredients = nlpData.ingredients || [];
+    const notes = nlpData.notes || [];
+    
+    // Create or get NLP section
+    let nlpSection = document.getElementById('nlpSection');
+    if (!nlpSection) {
+        nlpSection = document.createElement('div');
+        nlpSection.id = 'nlpSection';
+        nlpSection.className = 'nlp-section';
+        nlpSection.innerHTML = '<h2 class="nlp-heading">Ingredient Analysis</h2><div id="nlpContent"></div>';
+        
+        // Insert after nutrition section
+        const nutritionSection = document.querySelector('.nutrition-section');
+        if (nutritionSection && nutritionSection.parentNode) {
+            nutritionSection.parentNode.insertBefore(nlpSection, nutritionSection.nextSibling);
+        }
+    }
+    
+    const nlpContent = document.getElementById('nlpContent');
+    if (!nlpContent) return;
+    
+    nlpContent.innerHTML = '';
+    
+    if (ingredients.length === 0) {
+        nlpContent.innerHTML = '<p class="nlp-no-data">No ingredient analysis available.</p>';
+        return;
+    }
+    
+    // Group ingredients by category
+    const byCategory = {
+        'Risky': [],
+        'Neutral': [],
+        'Healthy': []
+    };
+    
+    ingredients.forEach(ing => {
+        const category = ing.category || 'Neutral';
+        if (byCategory[category]) {
+            byCategory[category].push(ing);
+        } else {
+            byCategory['Neutral'].push(ing);
+        }
+    });
+    
+    // Display ingredients by category
+    Object.entries(byCategory).forEach(([category, items]) => {
+        if (items.length === 0) return;
+        
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = `nlp-category nlp-category-${category.toLowerCase()}`;
+        
+        const categoryTitle = document.createElement('h3');
+        categoryTitle.className = 'nlp-category-title';
+        categoryTitle.textContent = `${category} Ingredients (${items.length})`;
+        categoryDiv.appendChild(categoryTitle);
+        
+        const ingredientsList = document.createElement('ul');
+        ingredientsList.className = 'nlp-ingredients-list';
+        
+        items.forEach(ing => {
+            const li = document.createElement('li');
+            li.className = 'nlp-ingredient-item';
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'nlp-ingredient-name';
+            nameSpan.textContent = ing.ingredient || ing.normalized || 'Unknown';
+            li.appendChild(nameSpan);
+            
+            if (ing.risk_level) {
+                const riskSpan = document.createElement('span');
+                riskSpan.className = `nlp-risk-level nlp-risk-${ing.risk_level}`;
+                riskSpan.textContent = `(${ing.risk_level} risk)`;
+                li.appendChild(riskSpan);
+            }
+            
+            if (ing.evidence && ing.evidence.length > 0) {
+                const evidenceDiv = document.createElement('div');
+                evidenceDiv.className = 'nlp-evidence';
+                evidenceDiv.textContent = `Reason: ${ing.evidence.join(', ')}`;
+                li.appendChild(evidenceDiv);
+            }
+            
+            ingredientsList.appendChild(li);
+        });
+        
+        categoryDiv.appendChild(ingredientsList);
+        nlpContent.appendChild(categoryDiv);
+    });
+    
+    // Display notes if any
+    if (notes.length > 0) {
+        const notesDiv = document.createElement('div');
+        notesDiv.className = 'nlp-notes';
+        const notesTitle = document.createElement('h3');
+        notesTitle.textContent = 'Additional Notes';
+        notesDiv.appendChild(notesTitle);
+        const notesList = document.createElement('ul');
+        notes.forEach(note => {
+            const li = document.createElement('li');
+            li.textContent = note;
+            notesList.appendChild(li);
+        });
+        notesDiv.appendChild(notesList);
+        nlpContent.appendChild(notesDiv);
+    }
 }
 
 // REMOVED: Old unused function

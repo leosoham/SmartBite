@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
-    "dev": "nodemon server",
+    "dev:node": "nodemon server",
+    "dev:py": "cd backend && py -3.11 -m uvicorn ai_nutrition.api.main:app --port 8085",
+    "dev": "concurrently -k -n NODE,PY -c blue,magenta \"npm:dev:node\" \"npm:dev:py\"",
     "vercel-build": "echo 'Building for Vercel'"
   },
   "engines": {
@@ -14,17 +16,21 @@
   "author": "Soham K",
   "license": "ISC",
   "dependencies": {
-    "mongodb": "^6.7.0",
+    "axios": "^1.7.7",
     "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "date-fns": "^2.23.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-fileupload": "^1.4.3",
+    "form-data": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.7.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "nodemon": "^2.0.12"
   }
 }

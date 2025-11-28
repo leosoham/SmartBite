@@ -1,0 +1,8 @@
+{
+	"refined palm oil": { "name": "Refined Palm Oil", "risk": "high", "aliases": ["refined palm oil", "palmolein", "hydrogenated palm oil"] },
+	"hydrogenated oil": { "name": "Hydrogenated Oil", "risk": "high", "aliases": ["partially hydrogenated", "hydrogenated"] },
+	"vegetable oil": { "name": "Vegetable Oil (unspecified)", "risk": "medium", "aliases": ["vegetable oil", "edible vegetable oil"] },
+	"canola oil": { "name": "Canola Oil", "risk": "medium", "aliases": ["rapeseed oil", "canola"] },
+	"sunflower oil": { "name": "Sunflower Oil", "risk": "medium", "aliases": ["sunflower oil"] }
+}
+

@@ -1,0 +1,13 @@
+{
+	"milk": { "name": "Milk", "risk": "high", "aliases": ["milk", "milk powder", "whey", "casein"] },
+	"egg": { "name": "Egg", "risk": "high", "aliases": ["egg", "albumen", "lysozyme"] },
+	"peanut": { "name": "Peanut", "risk": "high", "aliases": ["peanut", "groundnut"] },
+	"tree nut": { "name": "Tree Nuts", "risk": "high", "aliases": ["almond", "walnut", "cashew", "hazelnut", "pecan", "pistachio", "macadamia"] },
+	"soy": { "name": "Soy", "risk": "high", "aliases": ["soy", "soya", "soy lecithin"] },
+	"wheat": { "name": "Wheat", "risk": "high", "aliases": ["wheat", "gluten"] },
+	"sesame": { "name": "Sesame", "risk": "high", "aliases": ["sesame", "tahini"] },
+	"fish": { "name": "Fish", "risk": "high", "aliases": ["fish"] },
+	"shellfish": { "name": "Shellfish", "risk": "high", "aliases": ["shrimp", "prawn", "crab", "lobster"] },
+	"mustard": { "name": "Mustard", "risk": "high", "aliases": ["mustard"] }
+}
+

@@ -9,6 +9,7 @@ const errorHandler = require('./middleware/errorHandler');
 const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 const credentials = require('./middleware/credentials');
+const fileUpload = require('express-fileupload');
 const PORT = process.env.PORT || 3500;
 const { connectToDatabase } = require('./db');
 
@@ -31,6 +32,9 @@ app.use(express.json());
 //middleware for cookies
 app.use(cookieParser());
 
+// file upload middleware for multipart requests (OCR image)
+app.use(fileUpload());
+
 //serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
 
@@ -50,6 +54,7 @@ app.use('/savesearch', require('./routes/saveSearch'))
 app.use('/home', require('./routes/home'));
 app.use('/scanner', require('./routes/scanner'));
 app.use('/product-info(.html)?', require('./routes/productinfo'))
+app.use('/ai', require('./routes/ai'))
 app.all('*', (req, res) => {
     res.status(404);
     if (req.accepts('html')) {
@@ -87,5 +92,5 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export the Express app for Vercel serverless deployment
 module.exports = app;
-
-//app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
+//this below line is for local host runnning..
+app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));

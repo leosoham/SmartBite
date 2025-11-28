@@ -1,0 +1,13 @@
+{
+	"sugar": { "name": "Sugar", "risk": "medium", "aliases": ["sugar", "table sugar", "sucrose"] },
+	"high fructose corn syrup": { "name": "High-Fructose Corn Syrup", "risk": "high", "aliases": ["hfcs", "high fructose corn syrup"] },
+	"glucose syrup": { "name": "Glucose Syrup", "risk": "medium", "aliases": ["glucose syrup"] },
+	"fructose": { "name": "Fructose", "risk": "medium", "aliases": ["fructose"] },
+	"maltodextrin": { "name": "Maltodextrin", "risk": "medium", "aliases": ["maltodextrin"] },
+	"dextrose": { "name": "Dextrose", "risk": "medium", "aliases": ["dextrose"] },
+	"invert sugar": { "name": "Invert Sugar", "risk": "medium", "aliases": ["invert sugar"] },
+	"brown rice syrup": { "name": "Brown Rice Syrup", "risk": "medium", "aliases": ["brown rice syrup", "rice syrup"] },
+	"molasses": { "name": "Molasses", "risk": "medium", "aliases": ["molasses"] },
+	"honey": { "name": "Honey", "risk": "medium", "aliases": ["honey"] }
+}
+
