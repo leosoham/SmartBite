@@ -93,4 +93,4 @@ if (process.env.NODE_ENV !== 'production') {
 // Export the Express app for Vercel serverless deployment
 module.exports = app;
 //this below line is for local host runnning..
-app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
+//app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));

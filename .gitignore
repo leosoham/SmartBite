@@ -27,3 +27,4 @@ dist
 # OS specific files
 .DS_Store
 Thumbs.db
+backend/ai_nutrition/.venv/
